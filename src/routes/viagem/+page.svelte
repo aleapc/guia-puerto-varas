@@ -108,7 +108,7 @@
       <textarea
         class="{field} h-20"
         bind:value={tripPlan.docsNote}
-        placeholder="Passaportes, seguros, lembretes…"
+        placeholder="Ticket de bagagem despachada, passaportes, seguros, lembretes…"
       ></textarea>
       <label class="block">
         <span class="inline-block cursor-pointer rounded-xl bg-teal px-4 py-2 text-sm font-semibold text-white">

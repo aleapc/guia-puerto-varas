@@ -11,9 +11,19 @@
   import PlaceCard from '$lib/components/PlaceCard.svelte';
   import NearbyList from '$lib/components/NearbyList.svelte';
   import Menu from '$lib/components/Menu.svelte';
+  import { onMount } from 'svelte';
+  import { couple, loadCouple, setCouple } from '$lib/personalize.svelte';
 
   const today = todayISO();
   let refreshing = $state(false);
+
+  onMount(loadCouple);
+
+  async function onCoupleFile(e: Event) {
+    const input = e.target as HTMLInputElement;
+    if (input.files?.[0]) await setCouple(input.files[0]);
+    input.value = '';
+  }
 
   const alerts = $derived(buildAlerts(weatherStore.data, doneStore.ids, today));
   const plan = $derived(buildPlan(weatherStore.data, doneStore.ids, today));
@@ -51,9 +61,21 @@
       <span class={refreshing ? 'inline-block animate-spin' : 'inline-block'}>↻</span>
     </button>
   </div>
-  <span class="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-bold">{tripDayLabel(today)}</span>
-  <h1 class="mt-2 text-3xl font-bold leading-tight">Puerto Varas</h1>
-  <p class="text-sm text-white/90">Alê &amp; Andréia · região dos lagos 🇨🇱</p>
+  <div class="flex items-end justify-between gap-3">
+    <div class="min-w-0">
+      <span class="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-bold">{tripDayLabel(today)}</span>
+      <h1 class="mt-2 text-3xl font-bold leading-tight">Puerto Varas</h1>
+      <p class="text-sm text-white/90">Alê &amp; Andréia · região dos lagos 🇨🇱</p>
+    </div>
+    <label class="shrink-0 cursor-pointer" aria-label="Foto de nós dois">
+      <input type="file" accept="image/*" class="hidden" onchange={onCoupleFile} />
+      {#if couple.url}
+        <img src={couple.url} alt="Nós dois" class="h-16 w-16 rounded-2xl border-2 border-white/70 object-cover shadow-lg" />
+      {:else}
+        <span class="grid h-16 w-16 place-items-center rounded-2xl border-2 border-dashed border-white/60 px-1 text-center text-[10px] font-medium leading-tight text-white/85">+ foto<br />de nós 2</span>
+      {/if}
+    </label>
+  </div>
 </header>
 
 <main class="space-y-6 p-4 pb-12">

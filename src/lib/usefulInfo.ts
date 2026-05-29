@@ -101,6 +101,18 @@ export const usefulGroups: UsefulGroup[] = [
     ]
   },
   {
+    title: 'Combustível, farmácias & caixas',
+    emoji: '⛽',
+    places: [
+      { name: 'Posto Copec', detail: 'Combustível (rede chilena mais comum)', mapQuery: 'Copec Puerto Varas' },
+      { name: 'Posto Shell', detail: 'Combustível', mapQuery: 'Shell Puerto Varas' },
+      { name: 'Farmácia Cruz Verde', detail: 'Rede de farmácias (no centro)', mapQuery: 'Cruz Verde Puerto Varas' },
+      { name: 'Farmácia Salcobrand', detail: 'Rede de farmácias', mapQuery: 'Salcobrand Puerto Varas' },
+      { name: 'Farmacias Ahumada', detail: 'Rede de farmácias', mapQuery: 'Farmacias Ahumada Puerto Varas' },
+      { name: 'Caixa eletrônico / câmbio', detail: 'BancoEstado, Santander e casas de câmbio no centro', mapQuery: 'cajero automatico Puerto Varas' }
+    ]
+  },
+  {
     title: 'Apoio ao brasileiro',
     emoji: '🇧🇷',
     places: [
