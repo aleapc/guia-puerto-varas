@@ -1,6 +1,6 @@
 <script lang="ts">
   import { base } from '$app/paths';
-  import { categories } from '$lib/content';
+  import { attractions, categories, categoryById } from '$lib/content';
   import { weatherStore, doneStore, refreshWeather } from '$lib/state.svelte';
   import { buildAlerts } from '$lib/alerts';
   import { buildPlan } from '$lib/plan';
@@ -8,6 +8,9 @@
   import WeatherStrip from '$lib/components/WeatherStrip.svelte';
   import AlertCard from '$lib/components/AlertCard.svelte';
   import CategoryCard from '$lib/components/CategoryCard.svelte';
+  import PlaceCard from '$lib/components/PlaceCard.svelte';
+  import NearbyList from '$lib/components/NearbyList.svelte';
+  import Menu from '$lib/components/Menu.svelte';
 
   const today = todayISO();
   let refreshing = $state(false);
@@ -20,43 +23,73 @@
     await refreshWeather();
     refreshing = false;
   }
+
+  // Search across all attractions.
+  let q = $state('');
+  const diacritics = new RegExp('[\\u0300-\\u036f]', 'g');
+  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(diacritics, '');
+  const results = $derived(
+    q.trim().length >= 2
+      ? attractions.filter((a) =>
+          norm(`${a.name} ${a.tagline} ${categoryById(a.categoryId)?.title ?? ''}`).includes(norm(q))
+        )
+      : []
+  );
 </script>
 
-<header class="relative overflow-hidden rounded-b-3xl bg-gradient-to-br from-deep to-teal px-5 pb-6 pt-6 text-white">
-  <button
-    onclick={doRefresh}
-    class="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/20 text-xl"
-    aria-label="Atualizar previsão"
-  >
-    <span class={refreshing ? 'inline-block animate-spin' : 'inline-block'}>↻</span>
-  </button>
+<header
+  class="relative overflow-hidden rounded-b-3xl bg-gradient-to-br from-deep to-teal px-5 pb-6 text-white"
+  style="padding-top: calc(env(safe-area-inset-top) + 1rem)"
+>
+  <div class="mb-3 flex items-center justify-between">
+    <Menu tone="light" />
+    <button
+      onclick={doRefresh}
+      class="grid h-9 w-9 place-items-center rounded-full bg-white/20 text-xl"
+      aria-label="Atualizar previsão"
+    >
+      <span class={refreshing ? 'inline-block animate-spin' : 'inline-block'}>↻</span>
+    </button>
+  </div>
   <span class="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-bold">{tripDayLabel(today)}</span>
   <h1 class="mt-2 text-3xl font-bold leading-tight">Puerto Varas</h1>
   <p class="text-sm text-white/90">Alê &amp; Andréia · região dos lagos 🇨🇱</p>
 </header>
 
 <main class="space-y-6 p-4 pb-12">
-  <!-- Plano de hoje -->
+  <!-- Sugestão de hoje + Ao redor agora (carrossel deslizável) -->
   <section>
-    <h2 class="mb-2 text-lg font-bold">📋 Plano de hoje</h2>
-    <div class="rounded-2xl bg-white p-4 shadow-sm">
-      <p class="font-bold">{plan.title}</p>
-      <p class="mt-0.5 text-sm text-deep/70">{plan.reason}</p>
-      {#if plan.emptyMsg}
-        <p class="mt-3 text-sm">{plan.emptyMsg}</p>
-      {:else}
-        <ul class="mt-3 space-y-2.5">
-          {#each plan.items as it (it.when)}
-            <li class="flex gap-3">
-              <span class="mt-0.5 w-24 shrink-0 text-[11px] font-bold uppercase tracking-wide text-teal">{it.when}</span>
-              <div class="min-w-0">
-                <a href="{base}/local/{it.id}" class="font-semibold underline decoration-teal/40 underline-offset-2">{it.name}</a>
-                <p class="text-xs text-deep/60">{it.why}</p>
-              </div>
-            </li>
-          {/each}
-        </ul>
-      {/if}
+    <div class="mb-2 flex items-center justify-between">
+      <h2 class="text-lg font-bold">📋 Sugestão de hoje</h2>
+      <span class="text-xs text-deep/45">deslize →</span>
+    </div>
+    <div class="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4">
+      <!-- Painel 1: sugestão pelo clima -->
+      <div class="w-[85%] shrink-0 snap-center rounded-2xl bg-white p-4 shadow-sm">
+        <p class="font-bold">{plan.title}</p>
+        <p class="mt-0.5 text-sm text-deep/70">{plan.reason}</p>
+        {#if plan.emptyMsg}
+          <p class="mt-3 text-sm">{plan.emptyMsg}</p>
+        {:else}
+          <ul class="mt-3 space-y-2.5">
+            {#each plan.items as it (it.when)}
+              <li class="flex gap-3">
+                <span class="mt-0.5 w-24 shrink-0 text-[11px] font-bold uppercase tracking-wide text-teal">{it.when}</span>
+                <div class="min-w-0">
+                  <a href="{base}/local/{it.id}" class="font-semibold underline decoration-teal/40 underline-offset-2">{it.name}</a>
+                  <p class="text-xs text-deep/60">{it.why}</p>
+                </div>
+              </li>
+            {/each}
+          </ul>
+        {/if}
+      </div>
+      <!-- Painel 2: ao redor agora (GPS) -->
+      <div class="w-[85%] shrink-0 snap-center rounded-2xl bg-white p-4 shadow-sm">
+        <p class="font-bold">📍 Ao redor agora</p>
+        <p class="mb-3 mt-0.5 text-sm text-deep/70">Os pontos do guia mais perto de onde você está.</p>
+        <NearbyList limit={5} />
+      </div>
     </div>
   </section>
 
@@ -76,14 +109,31 @@
     </div>
   </section>
 
-  <!-- Categorias -->
+  <!-- Explorar / busca -->
   <section>
     <h2 class="mb-2 text-lg font-bold">🧭 Explorar por categoria</h2>
-    <div class="grid grid-cols-2 gap-3">
-      {#each categories as c (c.id)}
-        <CategoryCard category={c} />
-      {/each}
-    </div>
+    <input
+      bind:value={q}
+      placeholder="🔎 Buscar local (ex.: Osorno, museu, salmão…)"
+      class="mb-3 w-full rounded-xl border border-deep/15 bg-white px-4 py-2.5 text-sm outline-none focus:border-teal"
+    />
+    {#if q.trim().length >= 2}
+      {#if results.length}
+        <div class="space-y-3">
+          {#each results as a (a.id)}
+            <PlaceCard {a} />
+          {/each}
+        </div>
+      {:else}
+        <p class="py-6 text-center text-sm text-deep/55">Nada encontrado para “{q}”.</p>
+      {/if}
+    {:else}
+      <div class="grid grid-cols-2 gap-3">
+        {#each categories as c (c.id)}
+          <CategoryCard category={c} />
+        {/each}
+      </div>
+    {/if}
   </section>
 
   <p class="pt-1 text-center text-xs text-deep/50">

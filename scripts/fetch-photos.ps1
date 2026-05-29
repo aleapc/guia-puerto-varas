@@ -15,7 +15,16 @@ $topics = @(
   @{ q = "Iglesia Sagrado Corazon Puerto Varas"; file = "iglesia.jpg" },
   @{ q = "Palafitos Castro Chiloe";              file = "castro.jpg" },
   @{ q = "Lago Llanquihue Osorno";               file = "llanquihue.jpg" },
-  @{ q = "Angelmo Puerto Montt";                 file = "puerto-montt.jpg" }
+  @{ q = "Angelmo Puerto Montt";                 file = "puerto-montt.jpg" },
+  @{ q = "Museo Colonial Aleman Frutillar";      file = "museo.jpg" },
+  @{ q = "Feria libre Chile market";             file = "mercado.jpg" },
+  @{ q = "ceviche seafood dish";                 file = "seafood.jpg" },
+  @{ q = "craft beer glass pint";                file = "beer.jpg" },
+  @{ q = "asado parrilla grilled meat";          file = "grill.jpg" },
+  @{ q = "kuchen raspberry cake";                file = "kuchen.jpg" },
+  @{ q = "winter puffer jacket clothing";        file = "jacket.jpg" },
+  @{ q = "hiking boots footwear";                file = "boots.jpg" },
+  @{ q = "polar fleece sweater clothing";        file = "fleece.jpg" }
 )
 
 $headers = @{ "User-Agent" = "GuiaPuertoVaras/1.0 (personal travel app)" }
@@ -32,7 +41,7 @@ foreach ($t in $topics) {
     Write-Host "  = $($t.file): já existe, pulando" -ForegroundColor DarkGray
     continue
   }
-  Start-Sleep -Seconds 3  # be gentle with the Wikimedia API (429 rate limit)
+  Start-Sleep -Seconds 4  # be gentle with the Wikimedia API (429 rate limit)
   $q = [uri]::EscapeDataString($t.q)
   $api = "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search" +
          "&gsrnamespace=6&gsrlimit=12&gsrsearch=$q&prop=imageinfo&iiprop=url|mime|extmetadata&iiurlwidth=1280"
@@ -55,12 +64,17 @@ foreach ($t in $topics) {
     continue
   }
 
-  try {
-    Invoke-WebRequest -Uri $chosen.thumburl -OutFile $dest -Headers $headers -UseBasicParsing
-  } catch {
-    Write-Host "  ! $($t.file): download falhou ($($_.Exception.Message))" -ForegroundColor Yellow
-    continue
+  $downloaded = $false
+  for ($attempt = 1; $attempt -le 2; $attempt++) {
+    try {
+      Invoke-WebRequest -Uri $chosen.thumburl -OutFile $dest -Headers $headers -UseBasicParsing
+      $downloaded = $true; break
+    } catch {
+      if ($attempt -eq 1) { Start-Sleep -Seconds 8 }
+      else { Write-Host "  ! $($t.file): download falhou ($($_.Exception.Message))" -ForegroundColor Yellow }
+    }
   }
+  if (-not $downloaded) { continue }
   $kb = [math]::Round((Get-Item $dest).Length / 1KB)
   $artist = Strip-Html $chosen.extmetadata.Artist.value
   $lic = $chosen.extmetadata.LicenseShortName.value

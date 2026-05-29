@@ -8,6 +8,7 @@
   import { photoCredits } from '$lib/photoCredits';
   import Photo from '$lib/components/Photo.svelte';
   import Badge from '$lib/components/Badge.svelte';
+  import Menu from '$lib/components/Menu.svelte';
 
   let { data } = $props();
   const a = attractionById(data.id)!;
@@ -40,9 +41,13 @@
     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-black/10"></div>
     <a
       href="{base}/categoria/{a.categoryId}"
-      class="absolute left-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-black/35 text-xl text-white"
+      class="absolute left-3 grid h-9 w-9 place-items-center rounded-full bg-black/35 text-xl text-white"
+      style="top: calc(env(safe-area-inset-top) + 0.5rem)"
       aria-label="Voltar">←</a
     >
+    <div class="absolute right-3" style="top: calc(env(safe-area-inset-top) + 0.5rem)">
+      <Menu tone="light" />
+    </div>
     <div class="absolute bottom-3 left-4 right-4 text-white">
       <p class="text-2xl font-bold leading-tight drop-shadow">{a.name}</p>
       <p class="text-sm opacity-90">{a.tagline}</p>
@@ -99,6 +104,12 @@
 
   {#if a.description}
     <section><h3 class="mb-1 font-bold">📖 Sobre</h3><p class="text-sm leading-relaxed text-deep/85">{a.description}</p></section>
+  {/if}
+  {#if a.history}
+    <details class="rounded-2xl bg-white p-4 shadow-sm">
+      <summary class="cursor-pointer font-bold marker:text-teal">📜 Mais sobre o local (história)</summary>
+      <p class="mt-2 text-sm leading-relaxed text-deep/80">{a.history}</p>
+    </details>
   {/if}
   {#if a.whatToDo?.length}
     <section><h3 class="mb-1 font-bold">✅ O que fazer</h3>{@render bullets(a.whatToDo)}</section>
