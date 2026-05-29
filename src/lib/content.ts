@@ -66,7 +66,7 @@ export const trip = {
 export const categories: Category[] = [
   { id: 'apie', title: 'A pé, ao redor', emoji: '🥾', summary: 'Saindo do Airbnb sem pegar o carro: orla do lago, mirantes e o centro charmoso.', gradient: ['#2E7D5B', '#6FB98F'], image: 'puerto-varas.jpg' },
   { id: 'carro', title: 'Passeios de carro', emoji: '🚗', summary: 'A Ruta 225 sai da sua porta direto pros vulcões, saltos e o lago esmeralda.', gradient: ['#0E3A53', '#1E6F8E'], image: 'osorno.jpg' },
-  { id: 'termas', title: 'Termas & relax', emoji: '♨️', summary: 'Banhos termais pra relaxar no frio — de fácil acesso de carro a expedição.', gradient: ['#0E7C7B', '#5BC0BE'] },
+  { id: 'termas', title: 'Termas & relax', emoji: '♨️', summary: 'Banhos termais pra relaxar no frio — de fácil acesso de carro a expedição.', gradient: ['#0E7C7B', '#5BC0BE'], image: 'termas.jpg' },
   { id: 'cidades', title: 'Cidades próximas', emoji: '🏘️', summary: 'Frutillar, Puerto Montt e arredores — cultura, kuchen e mais variedade.', gradient: ['#6A4C93', '#A084C7'], image: 'frutillar.jpg' },
   { id: 'chiloe', title: 'Chiloé', emoji: '🌊', summary: 'A ilha mística: palafitos, igrejas de madeira e atmosfera de fim de mundo.', gradient: ['#3A4A5A', '#7A8B9C'], image: 'castro.jpg' },
   { id: 'cultura', title: 'Cultura & história', emoji: '🏛️', summary: 'Museus, igrejas de madeira e o legado alemão e chilote da região.', gradient: ['#7A5230', '#B98E5E'], image: 'museo.jpg' },
@@ -756,7 +756,7 @@ export const attractions: Attraction[] = [
     description: 'A opção termal mais fácil no inverno: piscinas coberta e ao ar livre dentro do Parque Nacional Puyehue, com estradas pavimentadas.',
     whatToBring: ['Traje de banho', 'Toalha', 'Chinelo'],
     kingTip: 'Funciona o ano todo, por turnos. Dá pra emendar com a neve de Antillanca, ali perto.',
-    lat: -40.7090, lng: -72.3000, distanceKm: 90, driveMinutes: 90, durationLabel: 'Meio dia / dia', fit: 'RAIN_OK',
+    lat: -40.7090, lng: -72.3000, distanceKm: 90, driveMinutes: 90, durationLabel: 'Meio dia / dia', fit: 'RAIN_OK', image: 'termas.jpg',
     links: [{ label: 'Termas Aguas Calientes', url: 'https://termasaguascalientes.cl/' }]
   },
   {
@@ -764,14 +764,14 @@ export const attractions: Attraction[] = [
     tagline: 'Piscinas a céu aberto, acesso pavimentado',
     description: '~5 piscinas (termais 35–42°C + talassoterapia) à beira do estuário de Reloncaví. Acesso todo pavimentado, sem 4x4.',
     whatToBring: ['Traje de banho', 'Toalha'],
-    lat: -41.4900, lng: -72.3000, distanceKm: 70, driveMinutes: 75, durationLabel: 'Meio dia', fit: 'RAIN_OK', mapQuery: 'Termas de Cochamo'
+    lat: -41.4900, lng: -72.3000, distanceKm: 70, driveMinutes: 75, durationLabel: 'Meio dia', fit: 'RAIN_OK', mapQuery: 'Termas de Cochamo', image: 'termas.jpg'
   },
   {
     id: 'termas_ralun', categoryId: 'termas', name: 'Termas de Ralún',
     tagline: 'Termas rústicas perto do fiorde',
     description: 'Termas rústicas na confluência do Reloncaví/Petrohué; o acesso final cruza o rio de bote. Aberto todos os dias.',
     kingTip: 'Depende do bote e do clima do rio — confirme por telefone no dia.',
-    lat: -41.3624, lng: -72.3271, distanceKm: 81, driveMinutes: 75, durationLabel: 'Meio dia', fit: 'RAIN_OK'
+    lat: -41.3624, lng: -72.3271, distanceKm: 81, driveMinutes: 75, durationLabel: 'Meio dia', fit: 'RAIN_OK', image: 'termas.jpg'
   },
   {
     id: 'termas_el_callao', categoryId: 'termas', name: 'Termas El Callao (expedição)',
@@ -779,7 +779,7 @@ export const attractions: Attraction[] = [
     description: 'No PN Vicente Pérez Rosales, sem acesso de carro: navegação pelo Lago Todos los Santos + trekking de vários dias com refúgios.',
     whatToWear: ['Equipamento de trekking sério'],
     kingTip: 'No inverno costuma ser inviável — só com operador guiado e janela de bom tempo. Mais pra registrar do que fazer agora.',
-    lat: -41.1300, lng: -72.2000, durationLabel: 'Expedição (2–4 dias)', fit: 'CLEAR_SKY'
+    lat: -41.1300, lng: -72.2000, durationLabel: 'Expedição (2–4 dias)', fit: 'CLEAR_SKY', image: 'termas.jpg'
   },
 
   // ---------- + PASSEIOS DE CARRO ----------

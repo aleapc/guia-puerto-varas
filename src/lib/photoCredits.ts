@@ -17,4 +17,5 @@ export const photoCredits: Record<string, string> = {
   'saltos.jpg': "Tamara Sepúlveda V. — Public domain (Wikimedia Commons)",
   'boots.jpg': "DocteurCosmos — CC BY-SA 3.0 (Wikimedia Commons)",
   'kuchen.jpg': "Katrin Gilger — CC BY-SA 2.0 (Wikimedia Commons)",
+  'termas.jpg': "Falk2 — CC BY-SA 4.0 (Wikimedia Commons)",
 };
