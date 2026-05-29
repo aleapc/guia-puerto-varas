@@ -50,10 +50,12 @@ export interface Category {
   image?: string;
 }
 
+// Generic location only (no precise lodging) — this file is in the PUBLIC repo.
+// Your real address/bookings live only on the device (Nossa viagem), never here.
 export const trip = {
-  homeName: 'Airbnb (Ruta 225, ao lado do Colegio Alemán)',
-  homeLat: -41.3108,
-  homeLng: -72.9455,
+  homeName: 'Puerto Varas',
+  homeLat: -41.3195,
+  homeLng: -72.9854,
   weatherLat: -41.3195,
   weatherLng: -72.9854,
   timezone: 'America/Santiago',

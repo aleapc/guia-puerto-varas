@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
 import localforage from 'localforage';
+import { encryptStr, decryptStr, encryptBlob, decryptBlob } from './secure.svelte';
 
 export interface FlightLeg {
   journey: string;
@@ -28,51 +29,54 @@ export interface TripPlan {
   docsNote: string;
 }
 
-// Pré-preenchido com os voos e o Airbnb dos prints (editável depois).
+// Generic skeleton only — NO real reservation data in the repo. The real data lives
+// only on the device (typed/imported by the user), encrypted if a PIN is set.
 const DEFAULT_TRIP: TripPlan = {
   flights: [
-    { journey: 'Ida · qua 03/jun', date: '2026-06-03', airline: 'LATAM', flightNo: 'LA751', from: 'GRU São Paulo', to: 'SCL Santiago', depart: '17:45', arrive: '21:05' },
-    { journey: 'Ida · conexão (qui 04)', date: '2026-06-04', airline: 'LATAM', flightNo: 'LA257', from: 'SCL Santiago', to: 'PMC Puerto Montt', depart: '06:00', arrive: '07:46' },
-    { journey: 'Volta · sáb 13/jun', date: '2026-06-13', airline: 'LATAM', flightNo: 'LA60', from: 'PMC Puerto Montt', to: 'SCL Santiago', depart: '20:16', arrive: '21:59' },
-    { journey: 'Volta · conexão (dom 14)', date: '2026-06-14', airline: 'LATAM', flightNo: 'LA8153', from: 'SCL Santiago', to: 'GRU São Paulo', depart: '04:55', arrive: '10:05' }
+    { journey: 'Ida', date: '2026-06-03', airline: 'LATAM', flightNo: '', from: 'GRU São Paulo', to: 'SCL Santiago', depart: '', arrive: '' },
+    { journey: 'Ida · conexão', date: '2026-06-04', airline: 'LATAM', flightNo: '', from: 'SCL Santiago', to: 'PMC Puerto Montt', depart: '', arrive: '' },
+    { journey: 'Volta', date: '2026-06-13', airline: 'LATAM', flightNo: '', from: 'PMC Puerto Montt', to: 'SCL Santiago', depart: '', arrive: '' },
+    { journey: 'Volta · conexão', date: '2026-06-14', airline: 'LATAM', flightNo: '', from: 'SCL Santiago', to: 'GRU São Paulo', depart: '', arrive: '' }
   ],
   stayName: 'Airbnb Puerto Varas',
-  stayAddress: 'Ruta 225 (Camino a Ensenada), ao lado do Colegio Alemán, Puerto Varas',
+  stayAddress: '',
   stayCheckin: '2026-06-04',
   stayCheckout: '2026-06-13',
   stayCode: '',
   stayNote: '',
   carCompany: '',
-  carPickup: 'Aeroporto El Tepual (PMC)',
-  carDropoff: 'Aeroporto El Tepual (PMC)',
+  carPickup: '',
+  carDropoff: '',
   carCode: '',
   carNote: '',
   docsNote: ''
 };
 
-function loadTrip(): TripPlan {
-  if (!browser) return structuredClone(DEFAULT_TRIP);
+export const tripPlan = $state<TripPlan>(structuredClone(DEFAULT_TRIP));
+
+/** Load saved trip from the device (decrypting if a PIN is active). Call after unlock/mount. */
+export async function loadTripFromStorage() {
+  if (!browser) return;
+  const raw = localStorage.getItem('gpv-trip');
+  if (!raw) return;
   try {
-    const v = localStorage.getItem('gpv-trip');
-    return v ? { ...structuredClone(DEFAULT_TRIP), ...JSON.parse(v) } : structuredClone(DEFAULT_TRIP);
+    const obj = JSON.parse(await decryptStr(raw));
+    Object.assign(tripPlan, { ...structuredClone(DEFAULT_TRIP), ...obj });
   } catch {
-    return structuredClone(DEFAULT_TRIP);
+    /* locked or corrupt — keep defaults */
   }
 }
 
-export const tripPlan = $state<TripPlan>(loadTrip());
-
-export function persistTrip() {
-  if (browser) {
-    try {
-      localStorage.setItem('gpv-trip', JSON.stringify(tripPlan));
-    } catch {
-      /* ignore */
-    }
+export async function persistTrip() {
+  if (!browser) return;
+  try {
+    localStorage.setItem('gpv-trip', await encryptStr(JSON.stringify(tripPlan)));
+  } catch {
+    /* ignore */
   }
 }
 
-// ---------- Attachments (IndexedDB via localforage) ----------
+// ---------- Attachments (IndexedDB via localforage, encrypted blobs when a PIN is set) ----------
 
 const store = browser ? localforage.createInstance({ name: 'gpv', storeName: 'attachments' }) : null;
 
@@ -97,7 +101,7 @@ function saveAttachMeta(list: AttachmentMeta[]) {
 
 export async function addAttachment(file: File): Promise<AttachmentMeta> {
   const id = `att_${Date.now()}_${Math.round(Math.random() * 1e6)}`;
-  await store!.setItem(id, file);
+  await store!.setItem(id, await encryptBlob(file));
   const meta: AttachmentMeta = {
     id,
     name: file.name,
@@ -110,10 +114,22 @@ export async function addAttachment(file: File): Promise<AttachmentMeta> {
 export async function getAttachmentURL(id: string): Promise<string | null> {
   if (!store) return null;
   const blob = await store.getItem<Blob>(id);
-  return blob ? URL.createObjectURL(blob) : null;
+  if (!blob) return null;
+  return URL.createObjectURL(await decryptBlob(blob));
 }
 
 export async function removeAttachment(id: string) {
   if (store) await store.removeItem(id);
   saveAttachMeta(loadAttachMeta().filter((m) => m.id !== id));
+}
+
+/** Re-encrypt existing attachments after a PIN is set (they were stored in plaintext). */
+export async function reencryptAttachments() {
+  if (!store) return;
+  for (const m of loadAttachMeta()) {
+    const blob = await store.getItem<Blob>(m.id);
+    if (blob && !blob.type.includes('x-gpv-enc')) {
+      await store.setItem(m.id, await encryptBlob(blob));
+    }
+  }
 }

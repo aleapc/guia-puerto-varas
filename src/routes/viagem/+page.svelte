@@ -4,18 +4,42 @@
   import {
     tripPlan,
     persistTrip,
+    loadTripFromStorage,
     addAttachment,
     getAttachmentURL,
     loadAttachMeta,
     removeAttachment,
+    reencryptAttachments,
     type AttachmentMeta
   } from '$lib/tripData.svelte';
+  import { lock, setPin } from '$lib/secure.svelte';
+  import { reencryptCouple } from '$lib/personalize.svelte';
 
-  // Persist on any change.
+  let loaded = $state(false);
+  let pin1 = $state('');
+  let savingPin = $state(false);
+  let pinMsg = $state('');
+
+  // Persist on change — but only after the initial load, to avoid overwriting saved data.
   $effect(() => {
     JSON.stringify(tripPlan);
-    persistTrip();
+    if (loaded) persistTrip();
   });
+
+  async function protectWithPin() {
+    if (pin1.length < 4) {
+      pinMsg = 'Use ao menos 4 dígitos.';
+      return;
+    }
+    savingPin = true;
+    await setPin(pin1);
+    await persistTrip();
+    await reencryptAttachments();
+    await reencryptCouple();
+    pin1 = '';
+    savingPin = false;
+    pinMsg = 'Protegido! O PIN será pedido ao abrir o app.';
+  }
 
   const field = 'w-full rounded-lg border border-deep/15 bg-white px-3 py-2 text-sm outline-none focus:border-teal';
   const lbl = 'text-[11px] font-semibold uppercase tracking-wide text-deep/50';
@@ -23,8 +47,10 @@
   let attachments = $state<{ meta: AttachmentMeta; url: string | null }[]>([]);
 
   onMount(async () => {
+    await loadTripFromStorage();
     const metas = loadAttachMeta();
     attachments = await Promise.all(metas.map(async (m) => ({ meta: m, url: await getAttachmentURL(m.id) })));
+    loaded = true;
   });
 
   async function onFile(e: Event) {
@@ -48,9 +74,36 @@
 
 <main class="space-y-6 p-4 pb-14">
   <p class="text-sm text-deep/70">
-    Já deixei seus voos e o Airbnb preenchidos (dos prints). Edite à vontade — tudo fica salvo <strong>no seu
-    aparelho</strong>. Códigos de reserva entram como texto; comprovantes você anexa como foto/arquivo abaixo.
+    Tudo aqui fica salvo <strong>só no seu aparelho</strong> — nunca sobe pra internet nem entra no código do app.
+    Preencha voos, hospedagem e carro; anexe os comprovantes (foto/PDF) abaixo.
   </p>
+
+  <!-- Proteção por PIN -->
+  <section class="rounded-2xl border border-deep/10 bg-white p-4 shadow-sm">
+    {#if lock.enabled}
+      <p class="font-bold text-forest">🔒 Protegido com PIN</p>
+      <p class="mt-1 text-sm text-deep/70">
+        Viagem e anexos ficam <strong>cifrados</strong> neste aparelho. O PIN é pedido ao abrir o app.
+      </p>
+    {:else}
+      <p class="font-bold">🔒 Proteger com um PIN</p>
+      <p class="mt-1 text-sm text-deep/70">
+        Opcional: cifra a viagem e os anexos no aparelho e pede um PIN ao abrir. Se esquecer o PIN, os dados
+        protegidos se perdem (não há como recuperar).
+      </p>
+      <div class="mt-2 flex gap-2">
+        <input bind:value={pin1} type="password" inputmode="numeric" placeholder="PIN (4+ dígitos)" class="{field} flex-1" />
+        <button
+          onclick={protectWithPin}
+          disabled={savingPin}
+          class="rounded-lg bg-teal px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+        >
+          {savingPin ? '…' : 'Ativar'}
+        </button>
+      </div>
+    {/if}
+    {#if pinMsg}<p class="mt-2 text-xs text-deep/60">{pinMsg}</p>{/if}
+  </section>
 
   <!-- VOOS -->
   <section>
