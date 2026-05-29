@@ -39,7 +39,7 @@ function b64ToBuf(s: string): Uint8Array {
 async function derive(pin: string, salt: Uint8Array): Promise<CryptoKey> {
   const base = await crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']);
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: 310000, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt, iterations: 600000, hash: 'SHA-256' },
     base,
     { name: 'AES-GCM', length: 256 },
     false,
@@ -83,6 +83,23 @@ export async function decryptBlob(blob: Blob): Promise<Blob> {
   const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
   const orig = blob.type.split('orig=')[1] || '';
   return new Blob([pt], { type: orig });
+}
+
+// Portable, self-contained seed (embeds its own salt) so ANY device can decrypt it with the
+// shared password — used for the encrypted trip bundle committed to the repo.
+export async function seedEncrypt(plain: string, password: string): Promise<string> {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const k = await derive(password, salt);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, k, enc.encode(plain));
+  return `gpvseed:${bufToB64(salt.buffer)}:${bufToB64(iv.buffer)}:${bufToB64(ct)}`;
+}
+
+export async function seedDecrypt(payload: string, password: string): Promise<string> {
+  const [, saltB, ivB, ctB] = payload.trim().split(':');
+  const k = await derive(password, b64ToBuf(saltB));
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64ToBuf(ivB) }, k, b64ToBuf(ctB));
+  return dec.decode(pt);
 }
 
 export async function setPin(pin: string): Promise<void> {

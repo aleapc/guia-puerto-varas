@@ -10,6 +10,7 @@
     loadAttachMeta,
     removeAttachment,
     reencryptAttachments,
+    generateSeedString,
     type AttachmentMeta
   } from '$lib/tripData.svelte';
   import { lock, setPin } from '$lib/secure.svelte';
@@ -58,6 +59,31 @@
     pw2 = '';
     savingPin = false;
     pinMsg = 'Protegido com senha! Ela será pedida ao abrir o app.';
+  }
+
+  // Encrypted bundle to commit to the repo (so both phones load it with one shared password).
+  let seedPw = $state('');
+  let seedOut = $state('');
+  let genBusy = $state(false);
+  let genMsg = $state('');
+  async function genSeed() {
+    if (seedPw.length < 8) {
+      genMsg = 'Use uma senha de 8+ caracteres (de preferência 5–6 palavras).';
+      seedOut = '';
+      return;
+    }
+    genBusy = true;
+    seedOut = await generateSeedString(seedPw);
+    genBusy = false;
+    genMsg = 'Pronto! Copie e cole em static/trip-seed.txt (ou me mande — é texto cifrado, seguro).';
+  }
+  async function copySeed() {
+    try {
+      await navigator.clipboard.writeText(seedOut);
+      genMsg = 'Copiado!';
+    } catch {
+      genMsg = 'Selecione e copie manualmente.';
+    }
   }
 
   const field = 'w-full rounded-lg border border-deep/15 bg-white px-3 py-2 text-sm outline-none focus:border-teal';
@@ -124,6 +150,26 @@
       </div>
     {/if}
     {#if pinMsg}<p class="mt-2 text-xs text-deep/60">{pinMsg}</p>{/if}
+  </section>
+
+  <!-- Pacote cifrado pro repo (compartilhar entre os 2 celulares) -->
+  <section class="rounded-2xl border border-deep/10 bg-white p-4 shadow-sm">
+    <p class="font-bold">📦 Levar a viagem pros 2 celulares</p>
+    <p class="mt-1 text-sm text-deep/70">
+      Gera um <strong>pacote cifrado</strong> dos dados acima pra commitar no repo (em <code>static/trip-seed.txt</code>).
+      Aí o seu celular e o da Andréia abrem com <strong>a mesma senha</strong> — sem redigitar tudo.
+    </p>
+    <div class="mt-2 space-y-2">
+      <input bind:value={seedPw} type="password" autocomplete="new-password" placeholder="Senha compartilhada (5–6 palavras)" class={field} />
+      <button onclick={genSeed} disabled={genBusy} class="w-full rounded-lg bg-deep px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
+        {genBusy ? '…' : 'Gerar pacote cifrado'}
+      </button>
+      {#if seedOut}
+        <textarea readonly rows="3" class="{field} font-mono text-[10px]">{seedOut}</textarea>
+        <button onclick={copySeed} class="rounded-lg border border-deep/20 px-4 py-1.5 text-xs font-semibold text-deep">Copiar</button>
+      {/if}
+      {#if genMsg}<p class="text-xs text-deep/60">{genMsg}</p>{/if}
+    </div>
   </section>
 
   <!-- VOOS -->

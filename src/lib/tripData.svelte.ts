@@ -1,6 +1,7 @@
 import { browser } from '$app/environment';
+import { base } from '$app/paths';
 import localforage from 'localforage';
-import { encryptStr, decryptStr, encryptBlob, decryptBlob } from './secure.svelte';
+import { encryptStr, decryptStr, encryptBlob, decryptBlob, seedEncrypt, seedDecrypt } from './secure.svelte';
 
 export interface FlightLeg {
   journey: string;
@@ -74,6 +75,39 @@ export async function persistTrip() {
   } catch {
     /* ignore */
   }
+}
+
+/** Whether an encrypted trip bundle was committed to the repo (static/trip-seed.txt). */
+export async function seedExistsInRepo(): Promise<boolean> {
+  if (!browser) return false;
+  try {
+    const r = await fetch(`${base}/trip-seed.txt`, { cache: 'no-store' });
+    if (!r.ok) return false;
+    return (await r.text()).trim().startsWith('gpvseed:');
+  } catch {
+    return false;
+  }
+}
+
+/** Decrypt the committed bundle with the shared password and populate the trip. */
+export async function loadSeedFromRepo(password: string): Promise<boolean> {
+  if (!browser) return false;
+  try {
+    const r = await fetch(`${base}/trip-seed.txt`, { cache: 'no-store' });
+    if (!r.ok) return false;
+    const cipher = (await r.text()).trim();
+    if (!cipher.startsWith('gpvseed:')) return false;
+    const obj = JSON.parse(await seedDecrypt(cipher, password));
+    Object.assign(tripPlan, { ...structuredClone(DEFAULT_TRIP), ...obj });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Produce the encrypted bundle string to commit to the repo. */
+export async function generateSeedString(password: string): Promise<string> {
+  return seedEncrypt(JSON.stringify(tripPlan), password);
 }
 
 // ---------- Attachments (IndexedDB via localforage, encrypted blobs when a PIN is set) ----------
