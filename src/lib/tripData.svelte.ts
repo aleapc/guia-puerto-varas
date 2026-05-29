@@ -1,6 +1,7 @@
 import { browser } from '$app/environment';
 import { base } from '$app/paths';
 import { seedDecrypt } from './secure.svelte';
+import { setCoupleFromDataURL } from './personalize.svelte';
 
 export interface FlightLeg {
   journey: string;
@@ -51,6 +52,8 @@ export interface TripPlan {
   cars: Car[];
   insurance: Insurance;
   docsNote: string;
+  /** Optional couple photo (data URL) carried inside the encrypted bundle. */
+  couplePhoto?: string;
 }
 
 function emptyTrip(): TripPlan {
@@ -83,6 +86,9 @@ export async function loadSeedFromRepo(password: string): Promise<boolean> {
     if (!cipher.startsWith('gpvseed:')) return false;
     const obj = JSON.parse(await seedDecrypt(cipher, password));
     Object.assign(tripPlan, { ...emptyTrip(), ...obj });
+    if (obj.couplePhoto) {
+      await setCoupleFromDataURL(obj.couplePhoto);
+    }
     tripState.unlocked = true;
     return true;
   } catch {
