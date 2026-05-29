@@ -1,10 +1,11 @@
 <script lang="ts">
   import { base } from '$app/paths';
   import { attractions, categories, categoryById } from '$lib/content';
-  import { weatherStore, doneStore, refreshWeather } from '$lib/state.svelte';
+  import { weatherStore, doneStore, favStore, refreshWeather } from '$lib/state.svelte';
   import { buildAlerts } from '$lib/alerts';
   import { buildPlan } from '$lib/plan';
   import { tripDayLabel, todayISO } from '$lib/dates';
+  import { forDate, hhmm, goldenHour, wmoEmoji } from '$lib/weather';
   import WeatherStrip from '$lib/components/WeatherStrip.svelte';
   import AlertCard from '$lib/components/AlertCard.svelte';
   import CategoryCard from '$lib/components/CategoryCard.svelte';
@@ -27,7 +28,11 @@
   }
 
   const alerts = $derived(buildAlerts(weatherStore.data, doneStore.ids, today));
-  const plan = $derived(buildPlan(weatherStore.data, doneStore.ids, today));
+  const plan = $derived(buildPlan(weatherStore.data, doneStore.ids, favStore.ids, today));
+  const cur = $derived(weatherStore.data?.current ?? null);
+  const todayFc = $derived(
+    weatherStore.data ? (forDate(weatherStore.data, today) ?? weatherStore.data.days[0]) : undefined
+  );
 
   async function doRefresh() {
     refreshing = true;
@@ -47,7 +52,7 @@
   const results = $derived(
     q.trim().length >= 2
       ? attractions.filter((a) =>
-          norm(`${a.name} ${a.tagline} ${categoryById(a.categoryId)?.title ?? ''}`).includes(norm(q))
+          norm(`${a.name} ${a.tagline} ${a.description} ${categoryById(a.categoryId)?.title ?? ''}`).includes(norm(q))
         )
       : []
   );
@@ -72,6 +77,12 @@
       <span class="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-bold">{tripDayLabel(today)}</span>
       <h1 class="mt-2 text-3xl font-bold leading-tight">Puerto Varas</h1>
       <p class="text-sm text-white/90">Alê &amp; Andréia · região dos lagos 🇨🇱</p>
+      {#if cur || todayFc?.sunset}
+        <p class="mt-1.5 text-xs text-white/85">
+          {#if cur}{wmoEmoji(cur.weatherCode, cur.isDay)} {Math.round(cur.temp)}° agora{/if}
+          {#if todayFc?.sunset} · 🌇 {hhmm(todayFc.sunset)} · 📸 dourada ~{goldenHour(todayFc.sunset)}{/if}
+        </p>
+      {/if}
     </div>
     <label class="shrink-0 cursor-pointer" aria-label="Foto de nós dois">
       <input type="file" accept="image/*" class="hidden" onchange={onCoupleFile} />

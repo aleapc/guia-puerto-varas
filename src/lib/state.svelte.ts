@@ -25,6 +25,7 @@ export const weatherStore = $state<{ loading: boolean; data: WeatherData | null 
 });
 
 export const doneStore = $state<{ ids: string[] }>({ ids: load<string[]>('gpv-done', []) });
+export const favStore = $state<{ ids: string[] }>({ ids: load<string[]>('gpv-fav', []) });
 export const notesStore = $state<{ map: Record<string, string> }>({
   map: load<Record<string, string>>('gpv-notes', {})
 });
@@ -53,6 +54,16 @@ export function toggleDone(id: string) {
   if (i >= 0) doneStore.ids.splice(i, 1);
   else doneStore.ids.push(id);
   save('gpv-done', doneStore.ids);
+}
+
+export function isFav(id: string): boolean {
+  return favStore.ids.includes(id);
+}
+export function toggleFav(id: string) {
+  const i = favStore.ids.indexOf(id);
+  if (i >= 0) favStore.ids.splice(i, 1);
+  else favStore.ids.push(id);
+  save('gpv-fav', favStore.ids);
 }
 
 export function getNote(id: string): string {

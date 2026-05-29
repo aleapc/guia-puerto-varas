@@ -26,12 +26,20 @@ function pick(ids: string[], pool: Set<string>): string | undefined {
   return ids.find((id) => pool.has(id));
 }
 
+function fitsMode(a: Attraction, mode: 'clear' | 'rainy' | 'mixed'): boolean {
+  if (mode === 'clear') return a.fit === 'CLEAR_SKY' || a.fit === 'ANY';
+  if (mode === 'rainy') return a.fit === 'RAIN_OK' || a.fit === 'INDOOR';
+  return true;
+}
+
 export function buildPlan(
   weather: WeatherData | null,
   doneIds: string[] = [],
+  favIds: string[] = [],
   today = todayISO()
 ): DayPlan {
   const done = new Set(doneIds);
+  const fav = new Set(favIds);
   const candidates = new Set(
     attractions.filter((a) => !done.has(a.id) && openToday(a, today)).map((a) => a.id)
   );
@@ -55,22 +63,26 @@ export function buildPlan(
 
   const items: PlanItem[] = [];
 
-  const mainId = pick(mainPrefs[mode], candidates);
+  // Prefer a favorite that fits today; otherwise fall back to the weather-based preference list.
+  const favMain = [...candidates].find((id) => fav.has(id) && fitsMode(attractionById(id)!, mode));
+  const mainId = favMain ?? pick(mainPrefs[mode], candidates);
   if (mainId) {
     candidates.delete(mainId);
     const a = attractionById(mainId)!;
-    const why =
+    const baseWhy =
       mode === 'clear'
         ? 'aproveita a janela de céu aberto'
         : mode === 'rainy'
           ? 'bom mesmo (ou melhor) com chuva'
           : 'flexível pro tempo instável';
-    items.push({ when: 'Manhã / tarde', id: a.id, name: a.name, why });
+    items.push({ when: 'Manhã / tarde', id: a.id, name: a.name, why: favMain ? `⭐ seu favorito — ${baseWhy}` : baseWhy });
   }
 
-  // A meal (restaurants repeat — prefer not-done, but fall back so there's always a suggestion).
+  // A meal — prefer a favorite restaurant/café, else a sensible default.
+  const restaurantIds = ['mesa_tropera', 'casa_valdes', 'santo_fuego', 'la_olla', 'ibis', 'aurelia', 'bravo_cabrera', 'da_alessandro', 'donde_el_gordito', 'cafe_danes'];
   const mealId =
-    pick(['mesa_tropera', 'casa_valdes', 'santo_fuego', 'la_olla', 'ibis'], candidates) ??
+    [...candidates].find((id) => fav.has(id) && restaurantIds.includes(id)) ??
+    pick(restaurantIds, candidates) ??
     'casa_valdes';
   const meal = attractionById(mealId)!;
   items.push({

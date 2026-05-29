@@ -11,6 +11,8 @@ export interface DayForecast {
   windMax: number;
   sunshineSeconds: number;
   daylightSeconds: number;
+  sunrise: string; // ISO local (e.g. 2026-06-04T08:12)
+  sunset: string;
 }
 
 export interface CurrentWeather {
@@ -40,7 +42,7 @@ function url(): string {
     '&current=temperature_2m,weather_code,wind_speed_10m,cloud_cover,is_day' +
     '&daily=weather_code,temperature_2m_max,temperature_2m_min,' +
     'precipitation_probability_max,precipitation_sum,wind_speed_10m_max,' +
-    'sunshine_duration,daylight_duration'
+    'sunshine_duration,daylight_duration,sunrise,sunset'
   );
 }
 
@@ -67,7 +69,9 @@ function toDomain(json: any, fetchedAt: number, fromCache: boolean): WeatherData
         precipSum: d.precipitation_sum?.[i] ?? 0,
         windMax: d.wind_speed_10m_max?.[i] ?? 0,
         sunshineSeconds: d.sunshine_duration?.[i] ?? 0,
-        daylightSeconds: d.daylight_duration?.[i] ?? 0
+        daylightSeconds: d.daylight_duration?.[i] ?? 0,
+        sunrise: d.sunrise?.[i] ?? '',
+        sunset: d.sunset?.[i] ?? ''
       }))
     : [];
   return { current, days, fetchedAt, fromCache };
@@ -170,4 +174,22 @@ export function wmoLabel(code: number): string {
   if (code >= 85 && code <= 86) return 'Pancadas de neve';
   if (code >= 95) return 'Tempestade';
   return '—';
+}
+
+/** "2026-06-04T17:52" → "17:52". */
+export function hhmm(iso: string): string {
+  return iso && iso.length >= 16 ? iso.slice(11, 16) : '';
+}
+
+/** Golden hour ≈ 50 min before sunset → "17:02". */
+export function goldenHour(sunsetIso: string): string {
+  const t = hhmm(sunsetIso);
+  if (!t) return '';
+  let [h, m] = t.split(':').map(Number);
+  m -= 50;
+  if (m < 0) {
+    m += 60;
+    h -= 1;
+  }
+  return `${String((h + 24) % 24).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }

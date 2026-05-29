@@ -66,11 +66,14 @@ export const trip = {
 export const categories: Category[] = [
   { id: 'apie', title: 'A pé, ao redor', emoji: '🥾', summary: 'Saindo do Airbnb sem pegar o carro: orla do lago, mirantes e o centro charmoso.', gradient: ['#2E7D5B', '#6FB98F'], image: 'puerto-varas.jpg' },
   { id: 'carro', title: 'Passeios de carro', emoji: '🚗', summary: 'A Ruta 225 sai da sua porta direto pros vulcões, saltos e o lago esmeralda.', gradient: ['#0E3A53', '#1E6F8E'], image: 'osorno.jpg' },
+  { id: 'termas', title: 'Termas & relax', emoji: '♨️', summary: 'Banhos termais pra relaxar no frio — de fácil acesso de carro a expedição.', gradient: ['#0E7C7B', '#5BC0BE'] },
   { id: 'cidades', title: 'Cidades próximas', emoji: '🏘️', summary: 'Frutillar, Puerto Montt e arredores — cultura, kuchen e mais variedade.', gradient: ['#6A4C93', '#A084C7'], image: 'frutillar.jpg' },
   { id: 'chiloe', title: 'Chiloé', emoji: '🌊', summary: 'A ilha mística: palafitos, igrejas de madeira e atmosfera de fim de mundo.', gradient: ['#3A4A5A', '#7A8B9C'], image: 'castro.jpg' },
   { id: 'cultura', title: 'Cultura & história', emoji: '🏛️', summary: 'Museus, igrejas de madeira e o legado alemão e chilote da região.', gradient: ['#7A5230', '#B98E5E'], image: 'museo.jpg' },
   { id: 'mercados', title: 'Mercados & compras', emoji: '🛒', summary: 'Pro plano de café e jantar em casa: supermercados, peixe fresco e feiras.', gradient: ['#B5651D', '#E0A458'], image: 'mercado.jpg' },
   { id: 'restaurantes', title: 'Restaurantes', emoji: '🍽️', summary: 'Pros dias de sair: vista pro lago, fogo, frutos do mar e clássicos.', gradient: ['#9A2617', '#D96C4A'], image: 'seafood.jpg' },
+  { id: 'cafe', title: 'Cafés & kuchen', emoji: '🍰', summary: 'A alma alemã de confeitaria: kuchen, chocolates e cafés à beira-lago.', gradient: ['#8A5A2B', '#D9A566'], image: 'kuchen.jpg' },
+  { id: 'cerveja', title: 'Cervejarias', emoji: '🍺', summary: 'Rota da cerveja artesanal da região dos lagos.', gradient: ['#A86A1E', '#E0B25A'], image: 'beer.jpg' },
   { id: 'roupa', title: 'Roupa de inverno', emoji: '🧥', summary: 'Onde comprar a camada certa: base, fleece e shell impermeável de verdade.', gradient: ['#1B5E5A', '#4FA39E'], image: 'jacket.jpg' }
 ];
 
@@ -453,7 +456,7 @@ export const attractions: Attraction[] = [
     lat: -41.3208, lng: -72.9868, durationLabel: 'Jantar', fit: 'INDOOR', mapQuery: 'Casa Valdés Puerto Varas', image: 'seafood.jpg'
   },
   {
-    id: 'mesa_tropera', categoryId: 'restaurantes', name: 'Mesa Tropera',
+    id: 'mesa_tropera', categoryId: 'cerveja', name: 'Mesa Tropera',
     tagline: 'Píer sobre o lago + cerveja própria',
     description: 'Restaurante-cervejaria com um píer avançando no lago. Pizzas, petiscos e cervejas próprias num ambiente descontraído e muito local.',
     kingTip: 'Ótimo no fim de tarde; chegue cedo pra pegar lugar no deck sobre a água.',
@@ -647,21 +650,21 @@ export const attractions: Attraction[] = [
 
   // ---------- RESTAURANTES ----------
   {
-    id: 'cafe_danes', categoryId: 'restaurantes', name: "Café Dane's",
+    id: 'cafe_danes', categoryId: 'cafe', name: "Café Dane's",
     tagline: 'Empanadas e kuchen — clássico da cidade',
     description: 'Cafeteria tradicional e familiar (Del Salvador 441), instituição local há décadas. Famosa pelas empanadas e pelo kuchen de framboesa.',
     kingTip: 'Ótimo pra um café da tarde ou almoço rápido no centro.',
     lat: -41.3195, lng: -72.9840, durationLabel: 'Café / almoço', fit: 'INDOOR', mapQuery: "Café Dane's Puerto Varas", image: 'kuchen.jpg'
   },
   {
-    id: 'cassis', categoryId: 'restaurantes', name: 'Cassis',
+    id: 'cassis', categoryId: 'cafe', name: 'Cassis',
     tagline: 'Chocolates, café e vista do lago',
     description: 'Café/chocolateria à beira do lago, com chocolates artesanais, kuchen, crepes e sorvetes (Volcassis) e vista pro Osorno.',
     kingTip: 'Bom remate de uma caminhada na orla.',
     lat: -41.3175, lng: -72.9855, durationLabel: 'Café', fit: 'INDOOR', mapQuery: 'Cassis Café Puerto Varas'
   },
   {
-    id: 'bravo_cabrera', categoryId: 'restaurantes', name: 'Bravo Cabrera',
+    id: 'bravo_cabrera', categoryId: 'cerveja', name: 'Bravo Cabrera',
     tagline: 'Gastropub com cerveja artesanal',
     description: 'Bar-restaurante animado na Av. Pérez Rosales, cozinha regional e cerveja artesanal na tap — bom ponto pra noite.',
     lat: -41.3168, lng: -72.9805, durationLabel: 'Almoço / jantar', fit: 'INDOOR', mapQuery: 'Bravo Cabrera Puerto Varas', image: 'beer.jpg'
@@ -710,6 +713,118 @@ export const attractions: Attraction[] = [
     tagline: 'Montanhismo e esqui de travessia (técnico)',
     description: 'Equipamento mais técnico (escalada, ski de travessia) que as grandes marcas. Confirme o horário da loja física antes de ir.',
     lat: -41.3185, lng: -72.9860, durationLabel: 'Compras', fit: 'INDOOR', mapQuery: 'Austral Crossing Puerto Varas', image: 'boots.jpg'
+  },
+
+  // ---------- CAFÉS & KUCHEN ----------
+  {
+    id: 'el_barista', categoryId: 'cafe', name: 'El Barista Caffé',
+    tagline: 'Café de especialidade',
+    description: 'Café de especialidade, comida e coquetéis autorais em espaço acolhedor (Walker Martínez 211).',
+    lat: -41.3200, lng: -72.9828, durationLabel: 'Café', fit: 'INDOOR', mapQuery: 'El Barista Caffe Puerto Varas', image: 'kuchen.jpg'
+  },
+  {
+    id: 'la_chalota', categoryId: 'cafe', name: 'La Chalota',
+    tagline: 'Bistrô caseiro, abre cedo',
+    description: 'Café/bistrô de cozinha caseira com ingredientes da zona; abre cedo (~7h30) — bom pro café da manhã.',
+    lat: -41.3188, lng: -72.9810, durationLabel: 'Café / almoço', fit: 'INDOOR', mapQuery: 'La Chalota Puerto Varas'
+  },
+
+  // ---------- CERVEJARIAS ----------
+  {
+    id: 'malta_chocolate', categoryId: 'cerveja', name: 'Cervecería Malta Chocolate',
+    tagline: 'Brewpub pioneiro (Ruta 225)',
+    description: 'Primeiro brewpub de Puerto Varas (2014): cerveja de método ancestral sem aditivos, com pizzas e vista pro lago/vulcões.',
+    lat: -41.3000, lng: -72.9000, durationLabel: 'Tarde / noite', fit: 'INDOOR', mapQuery: 'Cerveceria Malta Chocolate Puerto Varas', image: 'beer.jpg'
+  },
+  {
+    id: 'chester_beer', categoryId: 'cerveja', name: 'Chester Beer (Llanquihue)',
+    tagline: 'Microcervejaria premiada — IPA / Stout',
+    description: 'Brewpub premiado na cidade de Llanquihue (~25 min), foco em IPA e Stout, atendimento direto.',
+    lat: -41.2550, lng: -73.0000, distanceKm: 27, driveMinutes: 28, durationLabel: 'Tarde / noite', fit: 'INDOOR', mapQuery: 'Chester Beer Llanquihue', image: 'beer.jpg'
+  },
+  {
+    id: 'bordelago', categoryId: 'cerveja', name: 'Cerveza Bordelago (Ensenada)',
+    tagline: 'Cervejaria + restaurante a caminho do Osorno',
+    description: 'Cervejaria artesanal premiada com restaurante na Ruta 225 km 43, em Ensenada — boa parada rumo ao Osorno/Petrohué.',
+    lat: -41.2010, lng: -72.5530, distanceKm: 42, driveMinutes: 45, durationLabel: 'Parada', fit: 'INDOOR', mapQuery: 'Cerveza Bordelago Ensenada', image: 'beer.jpg'
+  },
+
+  // ---------- TERMAS & RELAX ----------
+  {
+    id: 'aguas_calientes', categoryId: 'termas', name: 'Termas de Aguas Calientes (Puyehue)',
+    tagline: 'Piscinas termais no PN Puyehue — o ano todo',
+    description: 'A opção termal mais fácil no inverno: piscinas coberta e ao ar livre dentro do Parque Nacional Puyehue, com estradas pavimentadas.',
+    whatToBring: ['Traje de banho', 'Toalha', 'Chinelo'],
+    kingTip: 'Funciona o ano todo, por turnos. Dá pra emendar com a neve de Antillanca, ali perto.',
+    lat: -40.7090, lng: -72.3000, distanceKm: 90, driveMinutes: 90, durationLabel: 'Meio dia / dia', fit: 'RAIN_OK',
+    links: [{ label: 'Termas Aguas Calientes', url: 'https://termasaguascalientes.cl/' }]
+  },
+  {
+    id: 'termas_cochamo', categoryId: 'termas', name: 'Termas de Cochamó (del Sol)',
+    tagline: 'Piscinas a céu aberto, acesso pavimentado',
+    description: '~5 piscinas (termais 35–42°C + talassoterapia) à beira do estuário de Reloncaví. Acesso todo pavimentado, sem 4x4.',
+    whatToBring: ['Traje de banho', 'Toalha'],
+    lat: -41.4900, lng: -72.3000, distanceKm: 70, driveMinutes: 75, durationLabel: 'Meio dia', fit: 'RAIN_OK', mapQuery: 'Termas de Cochamo'
+  },
+  {
+    id: 'termas_ralun', categoryId: 'termas', name: 'Termas de Ralún',
+    tagline: 'Termas rústicas perto do fiorde',
+    description: 'Termas rústicas na confluência do Reloncaví/Petrohué; o acesso final cruza o rio de bote. Aberto todos os dias.',
+    kingTip: 'Depende do bote e do clima do rio — confirme por telefone no dia.',
+    lat: -41.3624, lng: -72.3271, distanceKm: 81, driveMinutes: 75, durationLabel: 'Meio dia', fit: 'RAIN_OK'
+  },
+  {
+    id: 'termas_el_callao', categoryId: 'termas', name: 'Termas El Callao (expedição)',
+    tagline: 'Termas selvagens — só com guia/trekking',
+    description: 'No PN Vicente Pérez Rosales, sem acesso de carro: navegação pelo Lago Todos los Santos + trekking de vários dias com refúgios.',
+    whatToWear: ['Equipamento de trekking sério'],
+    kingTip: 'No inverno costuma ser inviável — só com operador guiado e janela de bom tempo. Mais pra registrar do que fazer agora.',
+    lat: -41.1300, lng: -72.2000, durationLabel: 'Expedição (2–4 dias)', fit: 'CLEAR_SKY'
+  },
+
+  // ---------- + PASSEIOS DE CARRO ----------
+  {
+    id: 'alerce_andino', categoryId: 'carro', name: 'PN Alerce Andino / Lago Chapo',
+    tagline: 'Alerces milenares e o Lago Chapo',
+    description: 'Floresta de alerces milenares e o Lago Chapo, com miradouros e trilha no setor Correntoso — drive de meio-dia a sudeste de Puerto Montt.',
+    whatToWear: ['Impermeável + bota (trilha enlameada)'],
+    lat: -41.5780, lng: -72.5440, distanceKm: 60, driveMinutes: 75, durationLabel: 'Meio dia', fit: 'RAIN_OK'
+  },
+  {
+    id: 'mirador_calbuco', categoryId: 'carro', name: 'Mirador do Vulcão Calbuco (Río Blanco)',
+    tagline: 'Trilha numa reserva pouco visitada',
+    description: 'Reserva Nacional Llanquihue: trilha pelo mirador do Río Blanco rumo ao Calbuco (cume interditado desde a erupção de 2015). Registro na CONAF.',
+    whatToWear: ['Bota de trilha + impermeável'],
+    kingTip: 'Confirme a abertura da CONAF e o estado do caminho antes de ir.',
+    lat: -41.2500, lng: -72.5000, distanceKm: 45, driveMinutes: 55, durationLabel: 'Meio dia', fit: 'CLEAR_SKY'
+  },
+  {
+    id: 'rafting_petrohue', categoryId: 'carro', name: 'Rafting no Rio Petrohué',
+    tagline: 'Corredeiras turquesa com o Osorno ao fundo',
+    description: 'Descida de ~12 km, corredeiras classe III–IV, perto de Petrohué/Ensenada. Operadores rodam o ano todo (inverno = rio mais cheio, roupa seca inclusa).',
+    whatToBring: ['Troca de roupa', 'Toalha'],
+    kingTip: 'Reserve com operador; depende do nível do rio.',
+    lat: -41.1400, lng: -72.4200, distanceKm: 58, driveMinutes: 65, durationLabel: 'Meio dia', fit: 'ANY'
+  },
+
+  // ---------- + CULTURA & HISTÓRIA ----------
+  {
+    id: 'museo_felmer', categoryId: 'cultura', name: 'Museo Alemán Antonio Felmer',
+    tagline: 'Acervo da colonização alemã (Nueva Braunau)',
+    description: 'Coleção de 3.800+ peças da colonização alemã num antigo celeiro, a ~9 km (Nueva Braunau). Aberto qui–dom.',
+    lat: -41.3000, lng: -73.0500, distanceKm: 9, driveMinutes: 15, durationLabel: '1–2h', fit: 'INDOOR', mapQuery: 'Museo Aleman Antonio Felmer', image: 'museo.jpg'
+  },
+  {
+    id: 'templo_luterano_frutillar', categoryId: 'cultura', name: 'Templo Luterano de Frutillar',
+    tagline: 'Igreja neogótica de madeira (1934)',
+    description: 'Igreja luterana em madeira (1929–34), Monumento Histórico Nacional, no coração da zona típica de Frutillar Bajo.',
+    lat: -41.1250, lng: -73.0550, distanceKm: 33, driveMinutes: 35, durationLabel: '30 min', fit: 'INDOOR', mapQuery: 'Templo Luterano Frutillar', image: 'frutillar.jpg'
+  },
+  {
+    id: 'catedral_puerto_montt', categoryId: 'cultura', name: 'Catedral de Puerto Montt',
+    tagline: 'Catedral de alerce de 1870',
+    description: 'Na Plaza de Armas de Puerto Montt, construída em 1870 em madeira de alerce — uma das mais antigas da região.',
+    lat: -41.4710, lng: -72.9400, distanceKm: 21, driveMinutes: 25, durationLabel: '30 min', fit: 'INDOOR', mapQuery: 'Catedral Puerto Montt'
   }
 ];
 

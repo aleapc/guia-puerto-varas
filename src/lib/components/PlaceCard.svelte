@@ -1,7 +1,7 @@
 <script lang="ts">
   import { base } from '$app/paths';
   import { categoryById, type Attraction } from '$lib/content';
-  import { isDone } from '$lib/state.svelte';
+  import { isDone, isFav, toggleFav } from '$lib/state.svelte';
   import { isoWeekday, todayISO } from '$lib/dates';
   import Photo from './Photo.svelte';
   import Badge from './Badge.svelte';
@@ -10,6 +10,13 @@
 
   const cat = categoryById(a.categoryId)!;
   const done = $derived(isDone(a.id));
+  const fav = $derived(isFav(a.id));
+
+  function star(e: Event) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFav(a.id);
+  }
   const openToday: boolean | null = a.hours?.openDays?.length
     ? a.hours.openDays.includes(isoWeekday(todayISO()))
     : null;
@@ -22,7 +29,10 @@
   <div class="min-w-0 flex-1">
     <div class="flex items-start justify-between gap-2">
       <p class="font-bold leading-tight {done ? 'text-deep/45 line-through' : ''}">{a.name}</p>
-      {#if done}<span class="shrink-0 font-bold text-forest">✓</span>{/if}
+      <span class="flex shrink-0 items-center gap-1">
+        {#if done}<span class="font-bold text-forest">✓</span>{/if}
+        <button onclick={star} class="text-lg leading-none" aria-label="Favoritar">{fav ? '⭐' : '☆'}</button>
+      </span>
     </div>
     <p class="line-clamp-1 text-xs text-deep/60">{a.tagline}</p>
     <div class="mt-1.5 flex flex-wrap gap-1.5">

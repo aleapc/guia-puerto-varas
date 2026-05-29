@@ -2,7 +2,7 @@
   import { base } from '$app/paths';
   import { getPosition, nearest, type NearbyItem } from '$lib/geo';
   import { categoryById } from '$lib/content';
-  import { isDone } from '$lib/state.svelte';
+  import { isDone, isFav } from '$lib/state.svelte';
 
   let { categoryId, limit = 10 }: { categoryId?: string; limit?: number } = $props();
 
@@ -24,6 +24,10 @@
 
   function fmt(km: number): string {
     return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+  }
+  // Rough time estimate from straight-line distance.
+  function eta(km: number): string {
+    return km <= 1.5 ? `🚶 ~${Math.max(1, Math.round(km * 13))} min` : `🚗 ~${Math.max(2, Math.round(km * 1.6))} min`;
   }
 </script>
 
@@ -53,8 +57,10 @@
         >
           <span class="text-xl">{cat?.emoji ?? '📍'}</span>
           <div class="min-w-0 flex-1">
-            <p class="truncate font-semibold {isDone(it.a.id) ? 'text-deep/45 line-through' : ''}">{it.a.name}</p>
-            <p class="truncate text-xs text-deep/55">{it.a.tagline}</p>
+            <p class="truncate font-semibold {isDone(it.a.id) ? 'text-deep/45 line-through' : ''}">
+              {#if isFav(it.a.id)}⭐ {/if}{it.a.name}
+            </p>
+            <p class="truncate text-xs text-deep/55">{eta(it.km)} · {it.a.tagline}</p>
           </div>
           <span class="shrink-0 rounded-full bg-teal/15 px-2.5 py-1 text-xs font-bold text-teal">{fmt(it.km)}</span>
         </a>

@@ -9,6 +9,7 @@
     { href: `${base}/viagem`, label: 'Nossa viagem', emoji: '✈️' },
     { href: `${base}/perto`, label: 'Perto de mim', emoji: '📍' },
     { href: `${base}/uteis`, label: 'Informações úteis', emoji: '🆘' },
+    { href: `${base}/bolso`, label: 'Bolso do viajante', emoji: '👛' },
     { href: `${base}/creditos`, label: 'Créditos das fotos', emoji: '📷' }
   ];
 </script>

@@ -1,7 +1,9 @@
 <script lang="ts">
   import { base } from '$app/paths';
+  import { onMount } from 'svelte';
   import { attractionById, categoryById } from '$lib/content';
-  import { weatherStore, isDone, toggleDone, getNote, setNote } from '$lib/state.svelte';
+  import { weatherStore, isDone, toggleDone, isFav, toggleFav, getNote, setNote } from '$lib/state.svelte';
+  import { getPlacePhoto, setPlacePhoto, removePlacePhoto } from '$lib/diary.svelte';
   import { fitHint, fitLabel } from '$lib/insights';
   import { isoWeekday, todayISO } from '$lib/dates';
   import { mapsUrl } from '$lib/maps';
@@ -16,6 +18,7 @@
   const credit = a.image ? photoCredits[a.image] : undefined;
 
   const done = $derived(isDone(a.id));
+  const fav = $derived(isFav(a.id));
   const hint = $derived(fitHint(a, weatherStore.data));
   const openToday: boolean | null = a.hours?.openDays?.length
     ? a.hours.openDays.includes(isoWeekday(todayISO()))
@@ -25,6 +28,20 @@
   function onNote(e: Event) {
     note = (e.target as HTMLTextAreaElement).value;
     setNote(a.id, note);
+  }
+
+  let placePhoto = $state<string | null>(null);
+  onMount(async () => {
+    placePhoto = await getPlacePhoto(a.id);
+  });
+  async function onPlacePhoto(e: Event) {
+    const input = e.target as HTMLInputElement;
+    if (input.files?.[0]) placePhoto = await setPlacePhoto(a.id, input.files[0]);
+    input.value = '';
+  }
+  async function clearPlacePhoto() {
+    await removePlacePhoto(a.id);
+    placePhoto = null;
   }
 </script>
 
@@ -93,14 +110,20 @@
     {/each}
   {/if}
 
-  <button
-    onclick={() => toggleDone(a.id)}
-    class="w-full rounded-xl py-3 font-semibold {done
-      ? 'bg-forest text-white'
-      : 'border border-forest text-forest'}"
-  >
-    {done ? '✓ Já fizemos (toque para desfazer)' : 'Marcar como já feito'}
-  </button>
+  <div class="flex gap-2">
+    <button
+      onclick={() => toggleFav(a.id)}
+      class="flex-1 rounded-xl py-3 font-semibold {fav ? 'bg-amber-400 text-deep' : 'border border-amber-400 text-amber-600'}"
+    >
+      {fav ? '⭐ Quero ir' : '☆ Quero ir'}
+    </button>
+    <button
+      onclick={() => toggleDone(a.id)}
+      class="flex-1 rounded-xl py-3 font-semibold {done ? 'bg-forest text-white' : 'border border-forest text-forest'}"
+    >
+      {done ? '✓ Já fizemos' : 'Já fizemos'}
+    </button>
+  </div>
 
   {#if a.description}
     <section><h3 class="mb-1 font-bold">📖 Sobre</h3><p class="text-sm leading-relaxed text-deep/85">{a.description}</p></section>
@@ -134,8 +157,8 @@
   {/if}
 
   <section>
-    <h3 class="mb-1 font-bold">📝 Minhas anotações</h3>
-    <p class="mb-1 text-xs text-deep/55">Cupom, promoção que viu na rua, lembrete…</p>
+    <h3 class="mb-1 font-bold">📝 Minhas anotações & diário</h3>
+    <p class="mb-1 text-xs text-deep/55">Cupom, promoção, lembrete… e uma foto de recordação (fica só no aparelho).</p>
     <textarea
       value={note}
       oninput={onNote}
@@ -143,6 +166,22 @@
       class="w-full rounded-xl border border-deep/15 bg-white p-3 text-sm outline-none focus:border-teal"
       placeholder="Escreva aqui…"
     ></textarea>
+    <div class="mt-2">
+      {#if placePhoto}
+        <div class="relative inline-block">
+          <img src={placePhoto} alt="Foto do local" class="h-32 w-full max-w-[12rem] rounded-xl object-cover" />
+          <button
+            onclick={clearPlacePhoto}
+            class="absolute right-1 top-1 grid h-6 w-6 place-items-center rounded-full bg-black/60 text-xs text-white"
+            aria-label="Remover foto">×</button>
+        </div>
+      {:else}
+        <label class="inline-block cursor-pointer rounded-xl border border-deep/20 px-4 py-2 text-sm font-semibold text-deep">
+          📷 Adicionar foto do local
+          <input type="file" accept="image/*" class="hidden" onchange={onPlacePhoto} />
+        </label>
+      {/if}
+    </div>
   </section>
 
   {#if credit}
