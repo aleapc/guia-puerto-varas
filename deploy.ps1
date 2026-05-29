@@ -5,7 +5,9 @@
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 
-$worktreePath = (Resolve-Path "..").Path + "\.gpv-gh-pages"
+# Worktree lives OUTSIDE D:\dev: Norton's folder shield blocks git.exe from writing
+# inside D:\dev (the repo's .git is also kept in %LOCALAPPDATA%\gpv-git for the same reason).
+$worktreePath = Join-Path $env:LOCALAPPDATA "gpv-gh-pages"
 $buildPath = Join-Path $PSScriptRoot "build"
 
 Write-Host "→ Build com BASE_PATH=/guia-puerto-varas ..." -ForegroundColor Cyan
