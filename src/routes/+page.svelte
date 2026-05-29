@@ -13,6 +13,7 @@
   import Menu from '$lib/components/Menu.svelte';
   import { onMount } from 'svelte';
   import { couple, loadCouple, setCouple } from '$lib/personalize.svelte';
+  import { pwa, checkForUpdate, applyUpdate } from '$lib/pwa.svelte';
 
   const today = todayISO();
   let refreshing = $state(false);
@@ -30,7 +31,12 @@
 
   async function doRefresh() {
     refreshing = true;
-    await refreshWeather();
+    // ↻ atualiza o clima E o app: se há versão nova pronta, aplica; senão, checa.
+    if (pwa.needRefresh) {
+      await applyUpdate(); // recarrega
+      return;
+    }
+    await Promise.all([refreshWeather(), checkForUpdate()]);
     refreshing = false;
   }
 

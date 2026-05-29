@@ -8,8 +8,8 @@ export default defineConfig({
   plugins: [
     sveltekit(),
     SvelteKitPWA({
-      registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      registerType: 'prompt',
+      injectRegister: false,
       strategies: 'generateSW',
       manifest: {
         name: 'Guia Puerto Varas',
