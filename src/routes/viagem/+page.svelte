@@ -1,15 +1,28 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import TopBar from '$lib/components/TopBar.svelte';
-  import { tripPlan, tripState, seedExistsInRepo, loadSeedFromRepo } from '$lib/tripData.svelte';
+  import {
+    tripPlan,
+    tripState,
+    seedExistsInRepo,
+    loadSeedFromRepo,
+    loadTripCache,
+    cacheTrip,
+    clearTripCache
+  } from '$lib/tripData.svelte';
 
   let checked = $state(false);
   let seedExists = $state(false);
   let pw = $state('');
   let busy = $state(false);
   let err = $state(false);
+  let remember = $state(true);
 
   onMount(async () => {
+    if (loadTripCache()) {
+      checked = true; // remembered on this device — no password needed
+      return;
+    }
     seedExists = await seedExistsInRepo();
     checked = true;
   });
@@ -18,11 +31,19 @@
     if (busy) return;
     err = false;
     busy = true;
-    if (!(await loadSeedFromRepo(pw))) {
+    if (await loadSeedFromRepo(pw)) {
+      if (remember) cacheTrip();
+      pw = '';
+    } else {
       err = true;
       pw = '';
     }
     busy = false;
+  }
+
+  async function lockDevice() {
+    clearTripCache();
+    seedExists = await seedExistsInRepo();
   }
 
   const maps = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
@@ -107,12 +128,15 @@
       </div>
     </section>
 
-    <p class="text-center text-[11px] text-deep/40">🔒 Decifrado só na memória deste aparelho — feche o app e a senha é pedida de novo.</p>
+    <button onclick={lockDevice} class="w-full rounded-xl border border-deep/20 py-2.5 text-sm font-semibold text-deep/70">
+      🔒 Bloquear neste aparelho (pedir a senha de novo)
+    </button>
+    <p class="text-center text-[11px] text-deep/40">As reservas ficam guardadas neste aparelho (fora da internet). Toque em “Bloquear” pra exigir a senha de novo.</p>
   {:else if checked && seedExists}
     <div class="space-y-3 rounded-2xl bg-white p-5 text-center shadow-sm">
       <span class="text-4xl">🔒</span>
       <p class="font-bold">Reservas protegidas</p>
-      <p class="text-sm text-deep/70">Digite a senha da viagem pra ver voos, hospedagem e carro. (Decifra só na memória — nada fica gravado.)</p>
+      <p class="text-sm text-deep/70">Digite a senha da viagem pra ver voos, hospedagem e carro.</p>
       <input
         bind:value={pw}
         type="password"
@@ -121,6 +145,10 @@
         onkeydown={(e) => e.key === 'Enter' && unlock()}
         class="w-full rounded-lg border border-deep/15 px-3 py-2.5 text-center outline-none focus:border-teal"
       />
+      <label class="flex items-center justify-center gap-2 text-sm text-deep/70">
+        <input type="checkbox" bind:checked={remember} class="h-4 w-4 accent-teal" />
+        Manter desbloqueado neste aparelho
+      </label>
       {#if err}<p class="text-sm text-red-600">Senha incorreta.</p>{/if}
       <button onclick={unlock} disabled={busy} class="w-full rounded-lg bg-teal py-2.5 font-semibold text-white disabled:opacity-60">
         {busy ? 'Verificando…' : 'Mostrar reservas'}

@@ -76,6 +76,40 @@ export async function seedExistsInRepo(): Promise<boolean> {
   }
 }
 
+const CACHE_KEY = 'gpv-trip-cache';
+
+/** Remember the unlocked trip on THIS device (stored decrypted; protected by the phone's own lock). */
+export function cacheTrip() {
+  if (browser) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(tripPlan));
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+/** If this device chose to stay unlocked, load the remembered trip (no password needed). */
+export function loadTripCache(): boolean {
+  if (!browser) return false;
+  const raw = localStorage.getItem(CACHE_KEY);
+  if (!raw) return false;
+  try {
+    Object.assign(tripPlan, { ...emptyTrip(), ...JSON.parse(raw) });
+    tripState.unlocked = true;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Forget the unlocked trip on this device → password is required again. */
+export function clearTripCache() {
+  if (browser) localStorage.removeItem(CACHE_KEY);
+  tripState.unlocked = false;
+  Object.assign(tripPlan, emptyTrip());
+}
+
 /** Decrypt the committed bundle with the shared password and populate the trip (in memory only). */
 export async function loadSeedFromRepo(password: string): Promise<boolean> {
   if (!browser) return false;
