@@ -31,7 +31,7 @@ export default defineConfig({
       },
       workbox: {
         // Precache the app shell, prerendered pages AND the bundled photos → full offline.
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,webp,jpg,jpeg,woff2,json}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,webp,jpg,jpeg,woff2,json,txt}'],
         navigateFallback: `${base}/`,
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         runtimeCaching: [
