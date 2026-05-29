@@ -39,7 +39,7 @@ function b64ToBuf(s: string): Uint8Array {
 async function derive(pin: string, salt: Uint8Array): Promise<CryptoKey> {
   const base = await crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']);
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt, iterations: 310000, hash: 'SHA-256' },
     base,
     { name: 'AES-GCM', length: 256 },
     false,

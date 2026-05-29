@@ -23,7 +23,7 @@
   }
 
   function forgot() {
-    if (confirm('Isso APAGA os dados protegidos (viagem e anexos) deste aparelho, pois estão cifrados com o PIN. Continuar?')) {
+    if (confirm('Isso APAGA os dados protegidos (viagem e anexos) deste aparelho, pois estão cifrados com a senha. Continuar?')) {
       resetProtected();
       location.reload();
     }
@@ -38,18 +38,18 @@
     >
       <span class="text-5xl">🔒</span>
       <h1 class="text-xl font-bold">Guia Puerto Varas</h1>
-      <p class="max-w-xs text-center text-sm text-white/80">Digite o PIN para desbloquear seus dados de viagem neste aparelho.</p>
+      <p class="max-w-xs text-center text-sm text-white/80">Digite sua senha para desbloquear seus dados de viagem neste aparelho.</p>
       <input
         bind:value={pin}
         type="password"
-        inputmode="numeric"
-        autocomplete="off"
+        autocomplete="current-password"
+        placeholder="Sua senha"
         onkeydown={(e) => e.key === 'Enter' && doUnlock()}
-        class="w-44 rounded-xl border border-white/30 bg-white/10 px-4 py-3 text-center text-2xl tracking-widest text-white outline-none"
+        class="w-64 rounded-xl border border-white/30 bg-white/10 px-4 py-3 text-center text-lg text-white outline-none placeholder:text-white/40"
       />
-      {#if err}<p class="text-sm text-red-200">PIN incorreto.</p>{/if}
+      {#if err}<p class="text-sm text-red-200">Senha incorreta.</p>{/if}
       <button onclick={doUnlock} class="rounded-xl bg-white px-10 py-3 font-bold text-deep">Desbloquear</button>
-      <button onclick={forgot} class="mt-2 text-xs text-white/50 underline">Esqueci o PIN</button>
+      <button onclick={forgot} class="mt-2 text-xs text-white/50 underline">Esqueci a senha</button>
     </div>
   {:else}
     {@render children()}

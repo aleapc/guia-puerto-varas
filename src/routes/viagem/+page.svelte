@@ -16,9 +16,23 @@
   import { reencryptCouple } from '$lib/personalize.svelte';
 
   let loaded = $state(false);
-  let pin1 = $state('');
+  let pw1 = $state('');
+  let pw2 = $state('');
   let savingPin = $state(false);
   let pinMsg = $state('');
+
+  function strength(p: string): string {
+    if (!p) return '';
+    if (p.length < 8) return 'curta (mín. 8)';
+    let classes = 0;
+    if (/[a-z]/.test(p)) classes++;
+    if (/[A-Z]/.test(p)) classes++;
+    if (/[0-9]/.test(p)) classes++;
+    if (/[^A-Za-z0-9]/.test(p)) classes++;
+    if (p.length >= 12 && classes >= 3) return 'forte ✅';
+    if (p.length >= 10 && classes >= 2) return 'ok';
+    return 'fraca';
+  }
 
   // Persist on change — but only after the initial load, to avoid overwriting saved data.
   $effect(() => {
@@ -26,19 +40,24 @@
     if (loaded) persistTrip();
   });
 
-  async function protectWithPin() {
-    if (pin1.length < 4) {
-      pinMsg = 'Use ao menos 4 dígitos.';
+  async function protectWithPassword() {
+    if (pw1.length < 8) {
+      pinMsg = 'Use ao menos 8 caracteres.';
+      return;
+    }
+    if (pw1 !== pw2) {
+      pinMsg = 'As senhas não conferem.';
       return;
     }
     savingPin = true;
-    await setPin(pin1);
+    await setPin(pw1);
     await persistTrip();
     await reencryptAttachments();
     await reencryptCouple();
-    pin1 = '';
+    pw1 = '';
+    pw2 = '';
     savingPin = false;
-    pinMsg = 'Protegido! O PIN será pedido ao abrir o app.';
+    pinMsg = 'Protegido com senha! Ela será pedida ao abrir o app.';
   }
 
   const field = 'w-full rounded-lg border border-deep/15 bg-white px-3 py-2 text-sm outline-none focus:border-teal';
@@ -81,24 +100,26 @@
   <!-- Proteção por PIN -->
   <section class="rounded-2xl border border-deep/10 bg-white p-4 shadow-sm">
     {#if lock.enabled}
-      <p class="font-bold text-forest">🔒 Protegido com PIN</p>
+      <p class="font-bold text-forest">🔒 Protegido com senha</p>
       <p class="mt-1 text-sm text-deep/70">
-        Viagem e anexos ficam <strong>cifrados</strong> neste aparelho. O PIN é pedido ao abrir o app.
+        Viagem, anexos e foto de vocês ficam <strong>cifrados (AES-256)</strong> neste aparelho. A senha é pedida ao abrir o app.
       </p>
     {:else}
-      <p class="font-bold">🔒 Proteger com um PIN</p>
+      <p class="font-bold">🔒 Proteger com senha forte</p>
       <p class="mt-1 text-sm text-deep/70">
-        Opcional: cifra a viagem e os anexos no aparelho e pede um PIN ao abrir. Se esquecer o PIN, os dados
-        protegidos se perdem (não há como recuperar).
+        Opcional: cifra a viagem, os anexos e a foto de vocês neste aparelho (AES-256). Só quem tiver a senha
+        acessa. Se esquecer a senha, os dados protegidos <strong>se perdem</strong> (não há como recuperar).
       </p>
-      <div class="mt-2 flex gap-2">
-        <input bind:value={pin1} type="password" inputmode="numeric" placeholder="PIN (4+ dígitos)" class="{field} flex-1" />
+      <div class="mt-2 space-y-2">
+        <input bind:value={pw1} type="password" autocomplete="new-password" placeholder="Senha forte (8+ caracteres)" class={field} />
+        <input bind:value={pw2} type="password" autocomplete="new-password" placeholder="Confirme a senha" class={field} />
+        {#if pw1}<p class="text-xs text-deep/55">Força: {strength(pw1)}</p>{/if}
         <button
-          onclick={protectWithPin}
+          onclick={protectWithPassword}
           disabled={savingPin}
-          class="rounded-lg bg-teal px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          class="w-full rounded-lg bg-teal px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
         >
-          {savingPin ? '…' : 'Ativar'}
+          {savingPin ? '…' : 'Ativar criptografia'}
         </button>
       </div>
     {/if}
