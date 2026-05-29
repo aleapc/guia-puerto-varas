@@ -526,6 +526,190 @@ export const attractions: Attraction[] = [
     kingTip: 'Combine com um dia em Puerto Montt + Angelmó.',
     lat: -41.4730, lng: -72.9430, distanceKm: 21, driveMinutes: 25,
     durationLabel: 'Compras', fit: 'INDOOR', mapQuery: 'Mall Paseo Costanera Puerto Montt', image: 'puerto-montt.jpg'
+  },
+
+  // ========== ADICIONAIS (lugares reais) ==========
+
+  // ---------- A PÉ ----------
+  {
+    id: 'monte_calvario', categoryId: 'apie', name: 'Mirador Monte Calvario',
+    tagline: 'O mirante da Cruz, ~15 min do centro',
+    description: 'Subida curta (rampa pra subir, escadas pra descer) até a Cruz e o via-crúcis, com vista panorâmica da cidade, do lago e dos vulcões Osorno e Calbuco.',
+    whatToDo: ['Subir até a Cruz', 'Vista 360° da cidade e do lago', 'Fotos dos vulcões'],
+    whatToWear: ['Tênis confortável', 'Camadas'],
+    kingTip: 'Vá num fim de tarde de céu limpo — os vulcões fazem a vista.',
+    lat: -41.3155, lng: -72.9835, distanceKm: 4, driveMinutes: 8,
+    durationLabel: '1h', fit: 'CLEAR_SKY', windSensitive: true, image: 'puerto-varas.jpg'
+  },
+  {
+    id: 'pedraplen', categoryId: 'apie', name: 'Pedraplén & embarcadero',
+    tagline: 'O píer de pedra e a vista mais fotografada',
+    description: 'Píer de pedra com a oficina de turismo e o cartão-postal do Osorno e Calbuco refletidos no lago, cercado de jardins e bancos.',
+    whatToDo: ['Foto clássica dos vulcões no lago', 'Pegar mapas na oficina de turismo', 'Sentar e contemplar'],
+    whatToWear: ['Corta-vento (venta na água)'],
+    kingTip: 'Os vulcões só aparecem com céu limpo — mas o píer é gostoso mesmo nublado.',
+    lat: -41.3197, lng: -72.9847, distanceKm: 4, driveMinutes: 9,
+    durationLabel: '30 min', fit: 'CLEAR_SKY', windSensitive: true, image: 'puerto-varas.jpg'
+  },
+  {
+    id: 'costanera_puerto_chico', categoryId: 'apie', name: 'Costanera até Puerto Chico',
+    tagline: 'Calçadão de ~3 km à beira do lago',
+    description: 'Caminhada pela orla ligando o centro a Puerto Chico, passando por cafés, praias e as roseiras que dão à cidade o apelido de "ciudad de las rosas".',
+    whatToDo: ['Caminhar a orla até Puerto Chico', 'Parar num café/sorveteria', 'Ver as praias e roseiras'],
+    whatToWear: ['Fleece + corta-vento'],
+    kingTip: 'Trecho mais bonito ao entardecer. Bom em qualquer clima.',
+    lat: -41.3215, lng: -72.9810, distanceKm: 4, driveMinutes: 9,
+    durationLabel: '1–2h', fit: 'ANY', windSensitive: true
+  },
+  {
+    id: 'feria_artesanos', categoryId: 'apie', name: 'Feira de Artesãos (rua coberta)',
+    tagline: '~90 artesãos — plano perfeito pra chuva',
+    description: 'Rua coberta na Santa Rosa com tecidos, lã, feltro, madeira, couro, mel e cosmética natural. Aberta todos os dias, ao lado da praça e da orla.',
+    whatToDo: ['Garimpar artesanato e lã', 'Presentes e "cositas"', 'Café por perto'],
+    kingTip: 'É coberta — o plano B ideal num dia de chuva.',
+    lat: -41.3186, lng: -72.9853, distanceKm: 4, driveMinutes: 9,
+    durationLabel: '1h', fit: 'INDOOR', mapQuery: 'Feria Artesanal Puerto Varas'
+  },
+  {
+    id: 'playas_orla', categoryId: 'apie', name: 'Praias da orla (Niklitschek / Hermosa)',
+    tagline: 'Beira-lago pra sentar e respirar',
+    description: 'Pequenas praias ao longo da costanera, boas pra um descanso com vista pro lago e os vulcões. No inverno, mais pra contemplar do que pra banho.',
+    whatToWear: ['Camadas + corta-vento'],
+    kingTip: 'Leve um termo de café e veja o pôr do sol sobre o lago.',
+    lat: -41.3222, lng: -72.9805, distanceKm: 4, driveMinutes: 9,
+    durationLabel: '30–60 min', fit: 'ANY', windSensitive: true
+  },
+
+  // ---------- CIDADES ----------
+  {
+    id: 'calbuco', categoryId: 'cidades', name: 'Calbuco',
+    tagline: 'Cidade das águas azuis — frutos do mar',
+    description: 'Vila pesqueira a ~40 min, com mariscos fresquíssimos, curanto e vista pro mar e vulcões. Plaza de Armas e a igreja San Miguel Arcángel.',
+    whatToDo: ['Comer marisco fresco no bairro La Vega', 'Plaza com vista pro mar', 'Curanto'],
+    whatToWear: ['Impermeável (vento marítimo)'],
+    kingTip: 'Vá com fome: chupe de locos e empanadas de camarão são imperdíveis.',
+    whereToEat: 'Bairro La Vega (mariscos, empanadas de camarão).',
+    lat: -41.7717, lng: -73.1300, distanceKm: 56, driveMinutes: 50,
+    durationLabel: 'Meio dia', fit: 'RAIN_OK'
+  },
+  {
+    id: 'maullin', categoryId: 'cidades', name: 'Maullín & Humedales',
+    tagline: 'Observação de aves na foz do rio',
+    description: 'Onde o rio Maullín encontra o Pacífico: um Santuário da Natureza com 150+ espécies de aves, praias e o povoado de Quenuir.',
+    whatToDo: ['Observação de aves', 'Navegação pelos bosques submersos', 'Praias selvagens'],
+    whatToWear: ['Impermeável sério + bota', 'Binóculo se tiver'],
+    kingTip: 'Mais pra quem curte natureza/aves; é um dia mais longo.',
+    lat: -41.6147, lng: -73.6056, distanceKm: 75, driveMinutes: 70,
+    durationLabel: 'Dia', fit: 'RAIN_OK'
+  },
+  {
+    id: 'cochamo', categoryId: 'cidades', name: 'Cochamó (Valle / La Junta)',
+    tagline: 'O "Yosemite chileno" no fiorde',
+    description: 'Vilarejo no fiorde de Reloncaví, porta de entrada do Valle de Cochamó, com paredões de granito e toboganes naturais. Trekking e cavalgada.',
+    whatToBring: ['Reserva pra acampar em La Junta (obrigatória)'],
+    whatToWear: ['Impermeável + bota de trilha'],
+    kingTip: 'Fica longe e a estrada V-69 pode complicar no inverno — confirme as condições antes de ir.',
+    lat: -41.4983, lng: -72.3142, distanceKm: 95, driveMinutes: 130,
+    durationLabel: 'Dia inteiro (longe)', fit: 'CLEAR_SKY'
+  },
+
+  // ---------- MERCADOS & COMPRAS ----------
+  {
+    id: 'vicki_johnson', categoryId: 'mercados', name: 'Vicki Johnson Chocolates',
+    tagline: 'Chocolateria artesanal histórica',
+    description: 'Chocolates artesanais com combinações locais (guinda com merkén, gengibre). Clássica da cidade, na Santa Rosa 318.',
+    lat: -41.3192, lng: -72.9845, durationLabel: 'Compras', fit: 'INDOOR', mapQuery: 'Vicki Johnson Chocolates Puerto Varas'
+  },
+  {
+    id: 'mamusia', categoryId: 'mercados', name: 'Mamusia',
+    tagline: 'Chocolates e pastelaria',
+    description: 'Chocolateria + pastelaria/padaria tradicional — doces, kuchen e chocolates locais.',
+    lat: -41.3205, lng: -72.9860, durationLabel: 'Compras', fit: 'INDOOR', mapQuery: 'Mamusia Puerto Varas'
+  },
+  {
+    id: 'la_dispensa', categoryId: 'mercados', name: 'La Dispensa',
+    tagline: 'Padaria de fermentação natural (masa madre)',
+    description: 'Pães de longa fermentação, opções veganas e naturais, no centro. Ótimo pro café da manhã em casa.',
+    lat: -41.3190, lng: -72.9830, durationLabel: 'Compras', fit: 'INDOOR', mapQuery: 'La Dispensa Puerto Varas'
+  },
+  {
+    id: 'galpon_aire_puro', categoryId: 'mercados', name: 'Galpón Aire Puro',
+    tagline: 'Vinhos, charcutaria e feira local (sáb)',
+    description: 'Galeria de produtos locais (chocolate, vinhos, charcutaria, café) e feira de frescos aos sábados — bom ponto único pro jantar em casa.',
+    lat: -41.3193, lng: -72.9848, durationLabel: 'Compras', fit: 'ANY', mapQuery: 'Galpon Aire Puro Puerto Varas'
+  },
+  {
+    id: 'sur_y_mar', categoryId: 'mercados', name: 'Sur y Mar (peixaria)',
+    tagline: 'Peixe e frutos do mar frescos',
+    description: 'Pescados e mariscos fresquíssimos pro jantar no Airbnb (retirada no Camino Ensenada; também entrega no centro).',
+    lat: -41.3010, lng: -72.9200, durationLabel: 'Compras', fit: 'INDOOR', mapQuery: 'Sur y Mar Puerto Varas'
+  },
+
+  // ---------- RESTAURANTES ----------
+  {
+    id: 'cafe_danes', categoryId: 'restaurantes', name: "Café Dane's",
+    tagline: 'Empanadas e kuchen — clássico da cidade',
+    description: 'Cafeteria tradicional e familiar (Del Salvador 441), instituição local há décadas. Famosa pelas empanadas e pelo kuchen de framboesa.',
+    kingTip: 'Ótimo pra um café da tarde ou almoço rápido no centro.',
+    lat: -41.3195, lng: -72.9840, durationLabel: 'Café / almoço', fit: 'INDOOR', mapQuery: "Café Dane's Puerto Varas", image: 'kuchen.jpg'
+  },
+  {
+    id: 'cassis', categoryId: 'restaurantes', name: 'Cassis',
+    tagline: 'Chocolates, café e vista do lago',
+    description: 'Café/chocolateria à beira do lago, com chocolates artesanais, kuchen, crepes e sorvetes (Volcassis) e vista pro Osorno.',
+    kingTip: 'Bom remate de uma caminhada na orla.',
+    lat: -41.3175, lng: -72.9855, durationLabel: 'Café', fit: 'INDOOR', mapQuery: 'Cassis Café Puerto Varas'
+  },
+  {
+    id: 'bravo_cabrera', categoryId: 'restaurantes', name: 'Bravo Cabrera',
+    tagline: 'Gastropub com cerveja artesanal',
+    description: 'Bar-restaurante animado na Av. Pérez Rosales, cozinha regional e cerveja artesanal na tap — bom ponto pra noite.',
+    lat: -41.3168, lng: -72.9805, durationLabel: 'Almoço / jantar', fit: 'INDOOR', mapQuery: 'Bravo Cabrera Puerto Varas', image: 'beer.jpg'
+  },
+  {
+    id: 'da_alessandro', categoryId: 'restaurantes', name: 'Da Alessandro',
+    tagline: 'Italiano — massas e pizza',
+    description: 'Massas caseiras, pizzas artesanais, risotos e antipasti (Vicente Pérez Rosales 1241). Bom pra variar dos frutos do mar.',
+    lat: -41.3165, lng: -72.9795, durationLabel: 'Almoço / jantar', fit: 'INDOOR', mapQuery: 'Da Alessandro Puerto Varas'
+  },
+  {
+    id: 'aurelia', categoryId: 'restaurantes', name: 'Aurelia',
+    tagline: 'Parrilla & bistrô sulista à beira-lago',
+    description: 'Cozinha de cocção lenta com produtos locais e vista privilegiada do lago (Santa Rosa 131).',
+    kingTip: 'Reserve uma mesa com vista ao entardecer.',
+    lat: -41.3185, lng: -72.9850, durationLabel: 'Jantar', fit: 'INDOOR', mapQuery: 'Aurelia Puerto Varas', image: 'grill.jpg'
+  },
+  {
+    id: 'donde_el_gordito', categoryId: 'restaurantes', name: 'Donde El Gordito',
+    tagline: 'Chilena tradicional, cortes e frutos do mar',
+    description: 'Clássico local familiar — cortes grelhados, frutos do mar frescos e massas caseiras (San Bernardo 560).',
+    lat: -41.3210, lng: -72.9835, durationLabel: 'Almoço / jantar', fit: 'INDOOR', mapQuery: 'Donde El Gordito Puerto Varas', image: 'seafood.jpg'
+  },
+
+  // ---------- ROUPA DE INVERNO ----------
+  {
+    id: 'doite', categoryId: 'roupa', name: 'Doite',
+    tagline: 'Camping e montanha (marca chilena)',
+    description: 'Barracas, mochilas, sacos de dormir, calçado e roupa técnica. Loja no centro, junto ao Mall Paseo.',
+    lat: -41.3193, lng: -72.9855, durationLabel: 'Compras', fit: 'INDOOR', mapQuery: 'Doite Puerto Varas', image: 'boots.jpg'
+  },
+  {
+    id: 'columbia', categoryId: 'roupa', name: 'Columbia',
+    tagline: 'Parkas e calçado de trekking',
+    description: 'Roupa e calçado outdoor da marca americana, no Mall Paseo Puerto Varas.',
+    lat: -41.3193, lng: -72.9855, durationLabel: 'Compras', fit: 'INDOOR', mapQuery: 'Columbia Mall Paseo Puerto Varas', image: 'jacket.jpg'
+  },
+  {
+    id: 'la_minga', categoryId: 'roupa', name: 'La Minga Concept Store',
+    tagline: 'Artesanato e design do sul (lã, presentes)',
+    description: 'Coletivo de ofícios com lã, tecidos, madeira e pantufas feitos à mão, comércio justo. Ótimo pra "cositas" e presentes quentinhos.',
+    lat: -41.3128, lng: -72.9859, durationLabel: 'Compras', fit: 'INDOOR', mapQuery: 'La Minga Puerto Varas'
+  },
+  {
+    id: 'austral_crossing', categoryId: 'roupa', name: 'Austral Crossing',
+    tagline: 'Montanhismo e esqui de travessia (técnico)',
+    description: 'Equipamento mais técnico (escalada, ski de travessia) que as grandes marcas. Confirme o horário da loja física antes de ir.',
+    lat: -41.3185, lng: -72.9860, durationLabel: 'Compras', fit: 'INDOOR', mapQuery: 'Austral Crossing Puerto Varas', image: 'boots.jpg'
   }
 ];
 
